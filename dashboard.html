@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1>User Dashboard</h1>
+
+        <h2 id="welcomeMessage">Welcome!</h2>
+        <p>You have successfully logged in.</p>
+
+        <div class="info-card">
+            <h3>User Information</h3>
+            <p>Username: <span id="displayUsername"></span></p>
+            <p>Status: Logged In</p>
+            <p>Storage: Local Storage + Session Storage</p>
+        </div>
+
+        <button id="logoutBtn">Logout</button>
+    </div>
+
+    <script>
+        // Check whether a valid login session exists
+        const loggedInUser =
+            sessionStorage.getItem("loggedInUser");
+
+        const userInfo = JSON.parse(
+            localStorage.getItem("userInfo") || "null"
+        );
+
+        if (!loggedInUser ||
+            !userInfo ||
+            userInfo.username !== loggedInUser) {
+
+            // Block unauthorized access
+            window.location.replace("index.html");
+        } else {
+            // Display the logged-in username
+            document.getElementById("welcomeMessage")
+                .textContent = "Welcome, " + loggedInUser + "!";
+
+            document.getElementById("displayUsername")
+                .textContent = loggedInUser;
+        }
+
+        // Logout and clear the active session
+        document.getElementById("logoutBtn")
+            .addEventListener("click", function() {
+                sessionStorage.removeItem("loggedInUser");
+                localStorage.removeItem("userInfo");
+
+                window.location.replace("index.html");
+            });
+
+        // Handle browser back/forward navigation
+        window.addEventListener("pageshow", function() {
+            if (!sessionStorage.getItem("loggedInUser")) {
+                window.location.replace("index.html");
+            }
+        });
+    </script>
+</body>
+</html>
