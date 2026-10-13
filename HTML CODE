@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="login-container">
+        <h1>User Login</h1>
+        <p>Enter your credentials to continue</p>
+
+        <form id="loginForm">
+            <input type="text" id="username"
+                   placeholder="Enter username" required>
+
+            <input type="password" id="password"
+                   placeholder="Enter password" required>
+
+            <button type="submit">Login</button>
+            <p id="message"></p>
+        </form>
+
+        <p class="hint">Demo: admin / 1234</p>
+    </div>
+
+    <script>
+        // Store demo user details in localStorage
+        if (!localStorage.getItem("users")) {
+            localStorage.setItem("users", JSON.stringify([
+                { username: "admin", password: "1234" }
+            ]));
+        }
+
+        // Prevent an already logged-in user from seeing login again
+        if (sessionStorage.getItem("loggedInUser")) {
+            window.location.replace("dashboard.html");
+        }
+
+        document.getElementById("loginForm")
+            .addEventListener("submit", function(event) {
+                event.preventDefault();
+
+                const username =
+                    document.getElementById("username").value.trim();
+                const password =
+                    document.getElementById("password").value;
+                const message = document.getElementById("message");
+
+                const users = JSON.parse(
+                    localStorage.getItem("users") || "[]"
+                );
+
+                const user = users.find(function(u) {
+                    return u.username === username &&
+                           u.password === password;
+                });
+
+                if (user) {
+                    // Store logged-in user information
+                    localStorage.setItem("userInfo", JSON.stringify({
+                        username: user.username
+                    }));
+
+                    // Store the active login session
+                    sessionStorage.setItem(
+                        "loggedInUser", user.username
+                    );
+
+                    window.location.replace("dashboard.html");
+                } else {
+                    message.textContent =
+                        "Invalid username or password!";
+                    message.style.color = "#ff6b6b";
+                }
+            });
+    </script>
+</body>
+</html>
